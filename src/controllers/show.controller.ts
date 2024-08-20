@@ -9,8 +9,15 @@ const fetchAndStoreShows = async (
   try {
     const shows = await getShows();
     for (const show of shows) {
-      const cast = await getCastForShow(show.id);
-      await Show.create({ id: show.id, name: show.name, cast });
+      // Check if the show already exists
+      const existingShow = await Show.findOne({ id: show.id });
+      // Add non-existing show
+      if (!existingShow) {
+        const cast = await getCastForShow(show.id);
+        await Show.create({ id: show.id, name: show.name, cast });
+      } else {
+        console.log(`Show with ID ${show.id} already exists, skipping...`);
+      }
     }
     res.status(200).send("Shows and cast data saved.");
   } catch (err) {

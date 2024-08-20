@@ -1,21 +1,15 @@
 import mongoose from "mongoose";
 import request from "supertest";
 
-import app from "../app";
-
-let server: any;
+import { app, server } from "../app";
 
 // Set the timeout for the entire test suite
 jest.setTimeout(120000);
 
-beforeAll(() => {
-  // Start the server before running the tests
-  server = app.listen(3000);
-});
-
 afterAll(async () => {
-  // Close the MongoDB connection and the server after all tests are done
+  // Close the MongoDB connection after all tests are done
   await mongoose.connection.close();
+  // Close the server after all tests are done
   server.close();
 });
 
