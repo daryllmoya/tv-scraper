@@ -6,6 +6,12 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+
     steps:
       - uses: actions/checkout@v2
 
@@ -19,6 +25,14 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+
+      - name: Wait for MongoDB to be ready
+        run: |
+          for i in `seq 1 30`; do
+            nc -z localhost 27017 && echo "MongoDB is up and running" && break
+            echo "Waiting for MongoDB..."
+            sleep 2
+          done
 
       - name: Run tests
         run: pnpm test
