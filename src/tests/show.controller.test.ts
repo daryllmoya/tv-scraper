@@ -1,8 +1,23 @@
+import mongoose from "mongoose";
 import request from "supertest";
+
 import app from "../app";
+
+let server: any;
 
 // Set the timeout for the entire test suite
 jest.setTimeout(120000);
+
+beforeAll(() => {
+  // Start the server before running the tests
+  server = app.listen(3000);
+});
+
+afterAll(async () => {
+  // Close the MongoDB connection and the server after all tests are done
+  await mongoose.connection.close();
+  server.close();
+});
 
 describe("GET /api/shows/fetch-and-store", () => {
   it("should fetch and store shows and cast data", async () => {
